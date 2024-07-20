@@ -1,21 +1,12 @@
 #!/usr/bin/env bash
-#script redirects user to cuberule.com
+# Script that configures a new Ubuntu machine with the following requirements:
 
-apt-get update
-apt-get install -y nginx
+sudo apt-get update
+sudo apt-get -y install nginx
+sudo ufw allow 'Nginx HTTP'
+echo "This is Ulrich from Holberton School :)" | sudo tee /var/www/html/index.html > /dev/null
 
-mkdir /etc/nginx/html
-touch /etc/nginx/html/index.html
-echo "Holberton School" > /etc/nginx/html/index.html
-printf %s "server {
-    listen 80;
-    listen [::]:80 default_server;
-    root   /etc/nginx/html;
-    index  index.html index.htm;
+string_for_replacement="server_name _;\n\trewrite ^\/redirect_me https:\/\/www.github.com\/ulrichr7 permanent;"
+sudo sed -i "s/server_name _;/$string_for_replacement/" /etc/nginx/sites-enabled/default
 
-    location /redirect_me {
-        return 301 http://cuberule.com/;
-    }
-}" > /etc/nginx/sites-available/default
-
-service nginx restart
+sudo service nginx restart
